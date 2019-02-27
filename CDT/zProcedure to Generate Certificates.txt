@@ -1,0 +1,50 @@
+ > -------- Output generated
+ > > ------ What happened
+
+
+TO generate private key of ashfaq : openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -pkeyopt rsa_keygen_pubexp:3 -out privkey-Ashfaq.pem
+
+To view: cat privkey-Ashfaq.pem | less(less=slow scrolling)
+
+To view it : openssl pkey -in privkey-Ashfaq.pem -text |less
+
+To generate public key : openssl pkey-in privkey-Ashfaq.pem -out pubkey-Ashfaq.pem -pubout
+
+
+
+===================================================================================================
+======================Same For Amulya pub and privatekey===========================================
+===================================================================================================
+
+nano message.txt
+ message.txt="hello motto"
+
+openssl dgst -sha1 message.txt
+
+>SHA1(message.txt)= 5f66b40843c7e2e96a1a62f4aa8e7559414c50f5
+
+openssl dgst sha1 sign privkey-Ashfaq.pem -out signature.bin message.txt
+
+>>creates sign.bin
+
+
+openssl pkeyutl -encrypt -in message.txt -pubin -inkey pubkey-Amulya.pem out ciphertext.bin
+
+>>creates ciphertext.bin
+
+
+openssl pkeyutl -decrypt -in ciphertext.bin -inkey privkey-Amulya.pem -out received-message.txt
+
+cat received-message.txt
+
+>hello motto
+
+
+diff received-message.txt message.txt
+>>0 (No response , i.e. theres no differnce)
+
+openssl dgst -sha1 -verify pubkey-Ashfaq.pem -signature signature.bin received-message.txt
+>Verified OK
+
+openssl dgst -sha1 -verify pubkey-Amulya.pem -signature signature.bin received-message.txt
+>verified Failure
